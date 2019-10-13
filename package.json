@@ -1,0 +1,23 @@
+{
+  "name": "tutorial",
+  "version": "0.1.0",
+  "description": "A Discord bot tutorial",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nullforce-workshops/discord-bot-sample.git"
+  },
+  "author": "nullforce",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nullforce-workshops/discord-bot-sample/issues"
+  },
+  "homepage": "https://github.com/nullforce-workshops/discord-bot-sample#readme",
+  "dependencies": {
+    "discord.js": "^11.5.1",
+    "dotenv": "^8.1.0"
+  }
+}
