@@ -1,5 +1,6 @@
 module.exports = {
     name: "avatar",
+    aliases: ["icon"],
     description: "Shows avatar URLs for one or more mentioned users",
     execute(message, args) {
         if (!message.mentions.users.size) {
@@ -7,7 +8,7 @@ module.exports = {
         }
 
         const avatarList = message.mentions.users.map(user => {
-            return `${user.username}'s avatar: <${user.displayAvatarURL}>`;
+            return `${user.username}'s avatar: ${user.displayAvatarURL}`;
         });
 
         message.channel.send(avatarList);
