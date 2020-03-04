@@ -8,6 +8,8 @@ const discordBotToken = process.env.DISCORD_BOT_TOKEN;
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
 
+const cooldowns = new Discord.Collection();
+
 const commandFiles = fs.readdirSync("./src/commands").filter(file => file.endsWith(".js"));
 for (const file of commandFiles) {
     const command = require(`./commands/${file}`);
@@ -34,6 +36,29 @@ client.on("message", message => {
     try {
         logCommandReceived(commandName);
 
+        if (!cooldowns.has(command.name)) {
+            cooldowns.set(command.name, new Discord.Collection());
+        }
+
+        const now = Date.now();
+        const timestamps = cooldowns.get(command.name);
+        // Default command cooldown to 3 seconds if not provided
+        const cooldownAmount = (command.cooldown || 3) * 1000;
+
+        if (timestamps.has(message.author.id)) {
+            const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+
+            if (now < expirationTime) {
+                const timeLeft = (expirationTime - now) / 1000;
+                return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
+            }
+        } else {
+            // Add the command user to the cooldown tracking
+            timestamps.set(message.author.id, now);
+            // Remove the command user when the cooldown period passes
+            setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+        }
+
         if (command.guildOnly && message.channel.type !== "text") {
             return message.reply("I can't execute that command inside DMs!");
         }
@@ -42,7 +67,7 @@ client.on("message", message => {
             let reply = `You didn't provide any arguments, ${message.author}!`;
 
             if (command.usage) {
-                reply += `\nThe proper usage would be: ${prefix}${command.name} ${command.usage}`;
+                reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
             }
 
             return message.channel.send(reply);
