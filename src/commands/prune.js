@@ -1,6 +1,7 @@
 module.exports = {
     name: "prune",
     description: "Prunes recent messages in the channel",
+    guildOnly: true,
     execute(message, args) {
         // NOTE: bot must be granted the manage messages permission!
         // WARN: since it doesn't check the permissions of the author, anyone can use it to prune messages!
